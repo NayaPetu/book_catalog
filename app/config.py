@@ -32,3 +32,21 @@ class Settings(BaseSettings):
         extra = "ignore"  # Игнорировать лишние поля, если они есть
 
 settings = Settings()
+
+
+# from pydantic_settings import BaseSettings
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
+# class Settings(BaseSettings):
+#     database_url: str
+#     secret_key: str
+#     algorithm: str
+
+#     class Config:
+#         env_file = ".env"
+#         env_file_encoding = "utf-8"
+#         extra = "ignore"
+
+# settings = Settings()

@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from app.routers import users, authors, books, ratings, recommend
 from app.db.session import engine
-from app.db.base import Base
+from sqlmodel import SQLModel
 
 app = FastAPI(title="Book Catalog API")
 
 # Create database tables
-Base.metadata.create_all(bind=engine)
+SQLModel.metadata.create_all(engine)
 
 # Include routers
 app.include_router(users.router, prefix="/users", tags=["users"])
