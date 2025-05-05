@@ -1,5 +1,51 @@
 # Алгоритм рекомендаций
 
+from sqlmodel import Session, select
+from app.models.ratings import Rating
+from app.models.books import Book
+from app.models.users import User
+from sqlalchemy.sql import func
+
+def get_recommendations(db: Session, username: str):
+    user = db.exec(select(User).where(User.username == username)).first()
+    if not user:
+        return []
+
+    # Get books rated by the user
+    rated_books = db.exec(
+        select(Rating.book_id).where(Rating.user_id == user.id)
+    ).all()
+    rated_book_ids = [book_id for (book_id,) in rated_books]
+
+    # Find users with similar ratings (simple collaborative filtering)
+    similar_users = db.exec(
+        select(Rating.user_id)
+        .where(Rating.book_id.in_(rated_book_ids))
+        .where(Rating.user_id != user.id)
+        .group_by(Rating.user_id)
+        .having(func.count() > 1)  # At least 2 common books
+    ).all()
+    similar_user_ids = [user_id for (user_id,) in similar_users]
+
+    # Get books rated highly by similar users
+    recommended_books = db.exec(
+        select(Book)
+        .join(Rating)
+        .where(Rating.user_id.in_(similar_user_ids))
+        .where(Rating.score >= 4)
+        .where(~Book.id.in_(rated_book_ids))
+        .group_by(Book.id)
+        .order_by(func.avg(Rating.score).desc())
+        .limit(5)
+    ).all()
+
+    return recommended_books if recommended_books else db.exec(
+        select(Book).where(~Book.id.in_(rated_book_ids)).limit(5)
+    ).all()
+
+
+
+
 # from fastapi import APIRouter, Depends, HTTPException
 # from sqlalchemy.orm import Session
 # from pydantic import BaseModel
@@ -75,24 +121,24 @@
 #     return recommendations[:request.limit]
 
 
-from sqlmodel import Session, select
-from app.models.ratings import Rating
-from app.models.books import Book
-from app.models.users import User
+# from sqlmodel import Session, select
+# from app.models.ratings import Rating
+# from app.models.books import Book
+# from app.models.users import User
 
-def get_recommendations(db: Session, username: str):
-    # Simple recommendation: return books with high average ratings not rated by the user
-    user = db.exec(select(User).where(User.username == username)).first()
-    if not user:
-        return []
+# def get_recommendations(db: Session, username: str):
+#     # Simple recommendation: return books with high average ratings not rated by the user
+#     user = db.exec(select(User).where(User.username == username)).first()
+#     if not user:
+#         return []
 
-    rated_books = db.exec(
-        select(Rating.book_id).where(Rating.user_id == user.id)
-    ).all()
-    rated_book_ids = [book_id for (book_id,) in rated_books]
+#     rated_books = db.exec(
+#         select(Rating.book_id).where(Rating.user_id == user.id)
+#     ).all()
+#     rated_book_ids = [book_id for (book_id,) in rated_books]
 
-    # Get top-rated books not rated by the user
-    top_books = db.exec(
-        select(Book).where(~Book.id.in_(rated_book_ids)).limit(5)
-    ).all()
-    return top_books
+#     # Get top-rated books not rated by the user
+#     top_books = db.exec(
+#         select(Book).where(~Book.id.in_(rated_book_ids)).limit(5)
+#     ).all()
+#     return top_books

@@ -1,20 +1,16 @@
 from fastapi import FastAPI
-from app.routers import users, authors, books, ratings, recommend
-from app.db.session import engine
-from sqlmodel import SQLModel
+from app.routers import users_router, authors_router, books_router, ratings_router, recommend_router
+
 
 app = FastAPI(title="Book Catalog API")
-
-# Create database tables
-SQLModel.metadata.create_all(engine)
-
-# Include routers
-app.include_router(users.router, prefix="/users", tags=["users"])
-app.include_router(authors.router, prefix="/authors", tags=["authors"])
-app.include_router(books.router, prefix="/books", tags=["books"])
-app.include_router(ratings.router, prefix="/ratings", tags=["ratings"])
-app.include_router(recommend.router, prefix="/recommend", tags=["recommend"])
 
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Book Catalog API"}
+
+
+app.include_router(users_router)
+app.include_router(authors_router)
+app.include_router(books_router)
+app.include_router(ratings_router)
+app.include_router(recommend_router)

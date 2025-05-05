@@ -21,21 +21,36 @@
 # def get_books(db: Session, skip: int = 0, limit: int = 100):
 #     return db.query(models.Book).offset(skip).limit(limit).all()
 
-from sqlmodel import Session, select
+# from sqlmodel import Session, select
+# from app.models.books import Book
+# from app.schemas.books import BookCreate
+
+# def create_book(db: Session, book: BookCreate):
+#     db_book = Book(**book.dict())
+#     db.add(db_book)
+#     db.commit()
+#     db.refresh(db_book)
+#     return db_book
+
+# def get_book(db: Session, book_id: int):
+#     statement = select(Book).where(Book.id == book_id)
+#     return db.exec(statement).first()
+
+# def get_books(db: Session, skip: int = 0, limit: int = 100):
+#     statement = select(Book).offset(skip).limit(limit)
+#     return db.exec(statement).all()
+
+
+from sqlmodel import Session
 from app.models.books import Book
 from app.schemas.books import BookCreate
+from app.crud.base import create_item, get_item, get_items
 
 def create_book(db: Session, book: BookCreate):
-    db_book = Book(**book.dict())
-    db.add(db_book)
-    db.commit()
-    db.refresh(db_book)
-    return db_book
+    return create_item(db, Book(**book.dict()))
 
 def get_book(db: Session, book_id: int):
-    statement = select(Book).where(Book.id == book_id)
-    return db.exec(statement).first()
+    return get_item(db, Book, book_id)
 
 def get_books(db: Session, skip: int = 0, limit: int = 100):
-    statement = select(Book).offset(skip).limit(limit)
-    return db.exec(statement).all()
+    return get_items(db, Book, skip, limit)

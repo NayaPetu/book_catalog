@@ -26,3 +26,4 @@ def create_rating(db: Session, rating: RatingCreate, user_id: int):
 def get_ratings_by_book(db: Session, book_id: int):
     statement = select(Rating).where(Rating.book_id == book_id)
     return db.exec(statement).all()
+
