@@ -1,17 +1,13 @@
-# from sqlalchemy import Column, Integer, String
-# from app.db.base import Base
+"""User model definition."""
 
-# class User(Base):
-#     __tablename__ = "users"
-
-#     id = Column(Integer, primary_key=True, index=True)
-#     username = Column(String, unique=True, index=True)
-#     hashed_password = Column(String)
-
-from sqlmodel import SQLModel, Field
 from typing import Optional
 
+from sqlmodel import Field, SQLModel
+
+
 class User(SQLModel, table=True):
+    """User database model."""
+
     id: Optional[int] = Field(default=None, primary_key=True)
     username: str = Field(index=True, unique=True)
     hashed_password: str

@@ -1,6 +1,6 @@
-# Базовый класс для моделей SQLAlchemy
-
+"""Base database configuration."""
 
 from sqlmodel import SQLModel
+
 
 Base = SQLModel

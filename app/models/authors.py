@@ -1,18 +1,13 @@
-# from sqlalchemy import Column, Integer, String
-# from app.db.base import Base
+"""Author model definition."""
 
-# class Author(Base):
-#     __tablename__ = "authors"
+from typing import List, Optional
 
-#     id = Column(Integer, primary_key=True, index=True)
-#     name = Column(String, index=True)
-#     bio = Column(String, nullable=True)
+from sqlmodel import Field, Relationship, SQLModel
 
-from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional, List
-from .books import Book
 
 class Author(SQLModel, table=True):
+    """Author database model."""
+
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True)
     bio: Optional[str] = None
