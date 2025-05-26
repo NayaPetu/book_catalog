@@ -1,17 +1,21 @@
 """Book model definition."""
 
-from typing import Optional
+from sqlalchemy import Column, String, Integer, ForeignKey, Text, Float
+from sqlalchemy.orm import relationship
+from .base import BaseModel
 
-from sqlmodel import Field, Relationship, SQLModel
 
+class Book(BaseModel):
+    """Модель книги"""
+    __tablename__ = "books"
 
-class Book(SQLModel, table=True):
-    """Book database model."""
+    title = Column(String(255), nullable=False, index=True)
+    description = Column(Text, nullable=True)
+    author_id = Column(Integer, ForeignKey("authors.id"), nullable=False)
+    isbn = Column(String(13), unique=True, index=True)
+    average_rating = Column(Float, default=0.0)
+    ratings_count = Column(Integer, default=0)
 
-    id: Optional[int] = Field(default=None, primary_key=True)
-    title: str = Field(index=True)
-    genre: Optional[str] = None
-    publication_year: Optional[str] = None
-    author_id: int = Field(foreign_key="author.id")
-
-    author: Optional["Author"] = Relationship(back_populates="books")
+    # Отношения
+    author = relationship("Author", backref="books")
+    ratings = relationship("Rating", backref="book", cascade="all, delete-orphan")

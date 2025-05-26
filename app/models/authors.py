@@ -2,14 +2,18 @@
 
 from typing import List, Optional
 
-from sqlmodel import Field, Relationship, SQLModel
+from sqlalchemy import Column, String, Text
+from sqlalchemy.orm import relationship
+from .base import BaseModel
 
 
-class Author(SQLModel, table=True):
-    """Author database model."""
+class Author(BaseModel):
+    """Модель автора"""
+    __tablename__ = "authors"
 
-    id: Optional[int] = Field(default=None, primary_key=True)
-    name: str = Field(index=True)
-    bio: Optional[str] = None
-
-    books: List["Book"] = Relationship(back_populates="author")
+    name = Column(String(255), nullable=False, index=True)
+    biography = Column(Text, nullable=True)
+    country = Column(String(100), nullable=True)
+    
+    # Отношения
+    books = relationship("Book", back_populates="author", cascade="all, delete-orphan")

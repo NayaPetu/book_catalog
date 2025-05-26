@@ -1,7 +1,18 @@
 """Initialize models module."""
 
-from .authors import Author
-from .books import Book
-from .ratings import Rating
-from .recommend import Recommend
+from .base import Base, BaseModel
 from .users import User
+from .books import Book
+from .authors import Author
+from .ratings import Rating
+from .recommend import Recommendation
+
+__all__ = [
+    'Base',
+    'BaseModel',
+    'User',
+    'Book',
+    'Author',
+    'Rating',
+    'Recommendation'
+]

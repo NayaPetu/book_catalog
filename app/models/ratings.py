@@ -1,14 +1,19 @@
 """Rating model definition."""
 
-from typing import Optional
+from sqlalchemy import Column, Integer, ForeignKey, Float, Text
+from sqlalchemy.orm import relationship
+from .base import BaseModel
 
-from sqlmodel import Field, SQLModel
 
+class Rating(BaseModel):
+    """Модель рейтинга книги"""
+    __tablename__ = "ratings"
 
-class Rating(SQLModel, table=True):
-    """Rating database model."""
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    book_id = Column(Integer, ForeignKey("books.id"), nullable=False)
+    rating = Column(Float, nullable=False)
+    review = Column(Text, nullable=True)
 
-    id: Optional[int] = Field(default=None, primary_key=True)
-    score: int
-    user_id: int = Field(foreign_key="user.id")
-    book_id: int = Field(foreign_key="book.id")
+    # Отношения
+    user = relationship("User", backref="ratings")
+    book = relationship("Book", back_populates="ratings")

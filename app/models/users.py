@@ -2,12 +2,16 @@
 
 from typing import Optional
 
-from sqlmodel import Field, SQLModel
+from sqlalchemy import Column, String, Boolean
+from .base import BaseModel
 
 
-class User(SQLModel, table=True):
-    """User database model."""
+class User(BaseModel):
+    """Модель пользователя"""
+    __tablename__ = "users"
 
-    id: Optional[int] = Field(default=None, primary_key=True)
-    username: str = Field(index=True, unique=True)
-    hashed_password: str
+    email = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+    is_admin = Column(Boolean, default=False)
